@@ -1,14 +1,85 @@
-//
-//  main.cpp
-//  Supermarket Management
-//
-//  Created by Aditya Vikram on 4/22/21.
-//
-
 #include <iostream>
+#include <string>
+#include <vector>
+#include <fstream>
 
-int main(int argc, const char * argv[]) {
-    // insert code here...
-    std::cout << "Hello, World!\n";
-    return 0;
+/// Abstract Class
+class PERSON
+{
+private:
+    
+public:
+};
+
+class CUSTOMER : public PERSON
+{
+private:
+    
+public:
+};
+
+class STAFF : public PERSON
+{
+private:
+    
+public:
+};
+
+class SUPPLIER : public PERSON
+{
+private:
+    
+public:
+};
+
+/// Abstract Class
+class PRODUCT
+{
+private:
+    
+public:
+};
+
+class PROCURED_PRODUCT : public PRODUCT
+{
+private:
+    
+public:
+};
+
+/// Aggregation between INVENTORY & PRODUCT's derived classes
+class INVENTORY
+{
+private:
+    
+public:
+};
+
+/// Aggregation between PROCUREMENT & SUPPLIER
+class PROCUREMENT
+{
+private:
+    
+public:
+};
+
+/// Aggregation between MEMBERSHIP & CUSTOMER
+class MEMBERSHIP
+{
+private:
+    
+public:
+};
+
+/// Aggregation between STORE & Staff
+class STORE
+{
+private:
+    
+public:
+};
+
+int main (int argc, const char * argv[])
+{
+    
 }
