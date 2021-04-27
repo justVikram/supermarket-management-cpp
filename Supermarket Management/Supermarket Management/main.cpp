@@ -85,6 +85,34 @@ public:
     
 };
 
+class GoldMember 
+{
+    customer c[100];
+    public:
+    void addPoints()
+    {
+
+    }
+};
+
+class SilverMember
+{
+    customer c[100];
+    void addPoints()
+    {
+
+    }
+};
+
+class BronzeMember
+{
+   customer c[100];
+   void addPoints()
+   {
+
+   }
+};
+
 class staff:public person
 {
     int aadharNo;
@@ -218,6 +246,10 @@ class membership
     {
         this->points=points;
         this->added=added;
+    }
+    virtual void addPoints()
+    {
+        
     }
     void printmembership()
     {
