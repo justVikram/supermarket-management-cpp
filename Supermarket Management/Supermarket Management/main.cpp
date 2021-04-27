@@ -87,7 +87,6 @@ public:
 
 class GoldMember 
 {
-    customer c[100];
     public:
     void addPoints()
     {
@@ -97,7 +96,7 @@ class GoldMember
 
 class SilverMember
 {
-    customer c[100];
+    public:
     void addPoints()
     {
 
@@ -106,7 +105,7 @@ class SilverMember
 
 class BronzeMember
 {
-   customer c[100];
+   public:
    void addPoints()
    {
 
@@ -246,10 +245,6 @@ class membership
     {
         this->points=points;
         this->added=added;
-    }
-    virtual void addPoints()
-    {
-        
     }
     void printmembership()
     {
