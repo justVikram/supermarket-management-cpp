@@ -26,6 +26,41 @@ public:
     
 };
 
+/// Aggregation between MEMBERSHIP & CUSTOMER
+class membership
+{
+    int points;
+    date added;
+public:
+    membership () {}
+    
+    membership (int points)
+    {
+        this->points = points;
+    }
+    membership(int points,date added)
+    {
+        this->points=points;
+        this->added=added;
+    }
+    void printmembership()
+    {
+        cout<<"Points:"<<points<<endl;
+        cout<<"Date on which points were added:";
+        added.printdate();
+    }
+    int getpoints()
+    {
+        return points;
+    }
+    
+    void addPoints (int pts)
+    {
+        points += pts;
+    }
+    
+};
+
 class person
 {
 protected:
@@ -66,65 +101,81 @@ public:
 
 class customer:public person
 {
-    multimap<int,int>product_purchased;
+    map<int,int>product_purchased;
+    membership membership_pts;
     
 public:
     
     customer () {}
     
-    customer(string name,int phNo,string addr):person(name,phNo,addr)
+    customer(string name,int phNo,string addr): membership_pts (0) ,person(name,phNo,addr) {}
+    
+    void purchaseProduct(int txn_id, int product_id)
     {
-        
+        product_purchased.emplace(pair <int, int> (txn_id, product_id));
     }
     
-    void purchaseProducts(int pp)
+    void addPoints (int points)
     {
-        
+        membership_pts.addPoints(points);
     }
     
 };
 
-class GoldMember 
+class goldmember : public customer
 {
     public:
-    void addPoints()
+    
+    goldmember (string name,int phNo,string addr) : customer (name, phNo, addr) {}
+    
+    void calcPoints(float bill_amount)
     {
-
+        // Gold member gets 20% of total purchase amount as
+        int eqvt_pts = 0.2 * bill_amount;
+        addPoints(eqvt_pts);
     }
 };
 
-class SilverMember
+class silvermember : public customer
 {
     public:
-    void addPoints()
+    
+    silvermember (string name,int phNo,string addr) : customer (name, phNo, addr) {}
+    
+    void calcPoints(int bill_amount)
     {
-
+        // Silver member gets 15% of total bill amount as
+        int eqvt_pts = 0.15 * bill_amount;
+        addPoints(eqvt_pts);
     }
 };
 
-class BronzeMember
+class bronzemember : public customer
 {
    public:
-   void addPoints()
+    
+    bronzemember (string name,int phNo,string addr) : customer (name, phNo, addr) {}
+   
+    void calcPoints(int bill_amount)
    {
-
+        // bronze member gets 10% of total bill amount as
+        int eqvt_pts = 0.1 * bill_amount;
+        addPoints(eqvt_pts);
    }
 };
 
 class staff:public person
 {
     int aadharNo;
-    string job_designation;
     float salary;
     date join_date;
 public:
     
     staff () {}
     
-    staff (string name,int phNo,string addr,int aadharNo,string jd,float salary,date join_date):person(name,phNo,addr)
+    staff (string name,int phNo,string addr,int aadharNo,float salary,date join_date):person(name,phNo,addr)
     {
         this->aadharNo=aadharNo;
-        this->job_designation=jd;
         this->salary=salary;
         this->join_date=join_date;
         
@@ -136,17 +187,14 @@ public:
         cout<<"phoneNo"<<phNo<<endl;
         cout<<"address"<<addr<<endl;
         cout<<"aadharNumber"<<aadharNo<<endl;
-        cout<<"job_designation"<<job_designation<<endl;
         cout<<"salary"<<salary<<endl;
     }
+    
     int getaadhar()
     {
         return aadharNo;
     }
-    string getJobDesignation()
-    {
-        return job_designation;
-    }
+    
     float getSalary()
     {
         return salary;
@@ -159,8 +207,8 @@ class cashier : public staff
     
 public:
     
-    cashier (int txns_processed, string name,int phNo,string addr,int aadharNo,string jd,float salary,date join_date) : txns_processed (txns_processed),
-    staff (name,phNo,addr,aadharNo,jd,salary,join_date) {}
+    cashier (int txns_processed, string name,int phNo,string addr,int aadharNo,float salary,date join_date) : txns_processed (txns_processed),
+    staff (name,phNo,addr,aadharNo,salary,join_date) {}
 };
 
 class  assistant : public staff
@@ -169,8 +217,8 @@ class  assistant : public staff
     
 public:
     
-    assistant (vector <string> advice, string name,int phNo,string addr,int aadharNo,string jd,float salary,date join_date) : advice (advice),
-    staff (name,phNo,addr,aadharNo,jd,salary,join_date) {}
+    assistant (vector <string> advice, string name,int phNo,string addr,int aadharNo,float salary,date join_date) : advice (advice),
+    staff (name,phNo,addr,aadharNo,salary,join_date) {}
 };
 
 class product
@@ -281,34 +329,6 @@ class supplier
     multimap<int,int>items_restocked;
 };
 
-/// Aggregation between MEMBERSHIP & CUSTOMER
-class membership
-{
-    int points;
-    date added;
-public:
-    membership()
-    {
-        
-    }
-    membership(int points,date added)
-    {
-        this->points=points;
-        this->added=added;
-    }
-    void printmembership()
-    {
-        cout<<"Points:"<<points<<endl;
-        cout<<"Date on which points were added:";
-        added.printdate();
-    }
-    int getpoints()
-    {
-        return points;
-    }
-    
-};
-
 /// Aggregation between STORE & Staff
 class store
 {
@@ -345,15 +365,23 @@ class transaction
     staff s;
     date date;
     float amount;
-    string txn_id;
     
 public:
+    
+    static int txn_id;
     
     transaction()
     {
         
     }
+    
+    static void getNextTxnId ()
+    {
+        txn_id++;
+    }
 };
+
+int transaction :: txn_id = 1;
 
 int main(int argc, const char *argv[])
 {
