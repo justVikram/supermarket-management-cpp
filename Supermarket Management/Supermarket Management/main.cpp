@@ -101,7 +101,7 @@ public:
 
 class customer:public person
 {
-    map<int,int>product_purchased;
+    multimap<int,int>product_purchased;
     membership membership_pts;
     
 public:
@@ -110,7 +110,7 @@ public:
     
     customer(string name,int phNo,string addr): membership_pts (0) ,person(name,phNo,addr) {}
     
-    void purchaseProduct(int txn_id, int product_id)
+    void purchasedProducts(int txn_id, int product_id)
     {
         product_purchased.emplace(pair <int, int> (txn_id, product_id));
     }
@@ -120,48 +120,67 @@ public:
         membership_pts.addPoints(points);
     }
     
+    
 };
 
 class goldmember : public customer
 {
-    public:
+public:
     
     goldmember (string name,int phNo,string addr) : customer (name, phNo, addr) {}
     
-    void calcPoints(float bill_amount)
+    int convertToPoints (int bill_amount)
     {
-        // Gold member gets 20% of total purchase amount as
-        int eqvt_pts = 0.2 * bill_amount;
-        addPoints(eqvt_pts);
+        int eqvt_pts = 0.20 * bill_amount;
+        return eqvt_pts;
+    }
+    
+    void calcPoints(int bill_amount)
+    {
+        // Silver member gets 15% of total bill amount as
+        
+        addPoints (convertToPoints (bill_amount));
     }
 };
 
 class silvermember : public customer
 {
-    public:
+public:
     
     silvermember (string name,int phNo,string addr) : customer (name, phNo, addr) {}
+    
+    int convertToPoints (int bill_amount)
+    {
+        int eqvt_pts = 0.15 * bill_amount;
+        return eqvt_pts;
+    }
     
     void calcPoints(int bill_amount)
     {
         // Silver member gets 15% of total bill amount as
-        int eqvt_pts = 0.15 * bill_amount;
-        addPoints(eqvt_pts);
+        
+        addPoints (convertToPoints (bill_amount));
     }
 };
 
 class bronzemember : public customer
 {
-   public:
+public:
     
     bronzemember (string name,int phNo,string addr) : customer (name, phNo, addr) {}
-   
+    
+    int convertToPoints (int bill_amount)
+    {
+        int eqvt_pts = 0.10 * bill_amount;
+        return eqvt_pts;
+    }
+    
     void calcPoints(int bill_amount)
-   {
-        // bronze member gets 10% of total bill amount as
-        int eqvt_pts = 0.1 * bill_amount;
-        addPoints(eqvt_pts);
-   }
+    {
+        // Silver member gets 15% of total bill amount as
+        
+        addPoints (convertToPoints (bill_amount));
+    }
 };
 
 class staff:public person
@@ -213,12 +232,17 @@ public:
 
 class  assistant : public staff
 {
-    vector <string> advice;
+    string advice;
     
 public:
     
-    assistant (vector <string> advice, string name,int phNo,string addr,int aadharNo,float salary,date join_date) : advice (advice),
+    assistant (string advice, string name,int phNo,string addr,int aadharNo,float salary,date join_date) : advice (advice),
     staff (name,phNo,addr,aadharNo,salary,join_date) {}
+    
+    auto getAdvice ()
+    {
+        return advice;
+    }
 };
 
 class product
@@ -383,7 +407,254 @@ public:
 
 int transaction :: txn_id = 1;
 
+
+
+customer findByPhNo (vector <goldmember> gold_person, vector <silvermember> silver_person, vector <bronzemember> bronze_person, int ph_no)
+{
+    customer * reqd_customer = new customer ("invalid", 00, "invalid");
+    
+    for (auto i : gold_person)
+    {
+        if (i.getPhoneNo() == ph_no)
+            reqd_customer = &i;
+    }
+    
+    for (auto i : silver_person)
+    {
+        if (i.getPhoneNo() == ph_no)
+            reqd_customer = &i;
+    }
+    
+    //FIXME:- DO THE SAME FOR THE OTHER VECTOR
+    
+    return *reqd_customer;
+}
+
+product findByProductID (vector <product> list_of_products, int p_id = 0)
+{
+    //FIXME:- RETURN OBJECT OF PRODUCT WHICH HAS SAME PRODUCT ID AS ONE OF THE PRODUCTS IN THE LIST
+    return list_of_products.at(0);
+}
+
+bool isProductIdValid (vector <product> list_of_products,int p_id)
+{
+    //FIXME:- SEARCH FOR PRODUCT WITH PRODUCT ID PASSED
+    return 1;
+}
+
+auto calcSum (vector <product> cart)
+{
+    //FIXME:- CALCULATE TOTAL PRICE OF ALL PRODUCTS IN PRICE
+    return 1;
+}
+
 int main(int argc, const char *argv[])
 {
+    vector <person> list_of_customers;
+    
+    vector <goldmember> gold_customers;
+    vector <silvermember> silver_customers;
+    vector <bronzemember> bronze_customers;
+    
+    vector <assistant> list_of_assistants;
+    vector <cashier> list_of_cashiers;
+    
+    vector <product> list_of_products;
+    vector <product> cart;
+    
+    cout << "Welcome to Vinayak Mart!" << endl;
+    
+    cout << "1. New customer\n2. Existing customer" << endl;
+    int ch;
+    cin >> ch;
+    
+    auto ph_no = 0;
+    
+    if (ch == 1)
+    {
+        int ch;
+        cout << "What membership tier would you like to avail?\n 1. Gold \n 2. Silver \n 3. Bronze" << endl;
+        cin >> ch;
+        
+        try
+        {
+            if (ch > 0 && ch < 4)
+            {
+                cout << "Enter your name:";
+                string name;
+                cin >> name;
+                
+                cout << "Enter your phone number:";
+                cin >> ph_no;
+                
+                cout << "Enter your address:";
+                string addr;
+                cin >> addr;
+                
+                switch (ch)
+                {
+                    case 1:
+                    {
+                        gold_customers.push_back (goldmember (name, ph_no, addr));
+                        break;
+                    }
+                        
+                    case 2:
+                    {
+                        silver_customers.push_back (silvermember (name, ph_no, addr));
+                        break;
+                    }
+                        
+                    case 3:
+                    {
+                        bronze_customers.push_back (bronzemember (name, ph_no, addr));
+                        break;
+                    }
+                }
+            }
+            
+            else
+                throw 404;
+        }
+        
+        catch (...)
+        {
+            cout << "Invalid preference. Please try again." << endl;
+        }
+    }
+    
+    else if (ch == 2)
+    {
+        cout << "Enter your phone number:" << endl;
+        cin >> ph_no;
+        
+        
+        try
+        {
+            auto person = findByPhNo (gold_customers, silver_customers, bronze_customers, ph_no);
+            
+            if (person.getName() == "invalid")
+                throw 404;
+        }
+        catch (...)
+        {
+            cout << "Invalid phone number, please try again." << endl;
+        }
+    }
+    
+    else
+        cout << "You have selected an incorrect option, please try again." << endl;
+    
+    auto curr_customer = findByPhNo(gold_customers, silver_customers, bronze_customers, ph_no);
+    
+    //probably end of while (1)
+    
+    cout << "What would you like to do next?" << endl;
+    cout << "1. View product catalogue\n2. Add a product to cart\n3. Ask for assistance\n4. Head to billing" << endl;
+    cin >> ch;
+    
+    
+    switch (ch)
+    {
+        case 1:
+        {
+            cout << "Displaying all products in the store..." << endl;
+            
+            for (auto i: list_of_products)
+            {
+                i.printproductdetails();
+                cout << endl;
+            }
+            break;
+        }
+            
+        case 2:
+        {
+            cout << "Enter product ID of the product you wish to add to cart:" << endl;
+            auto p_id = 0;
+            
+            try
+            {
+                cin >> p_id;
+                
+                if (! isProductIdValid (list_of_products,p_id))
+                    throw 404;
+            }
+            
+            catch (...)
+            {
+                cout << "Invalid product ID, try again" << endl;
+            }
+            
+            auto product_to_be_added = findByProductID(list_of_products, p_id);
+            cart.push_back(product_to_be_added);
+            
+            break;
+        }
+            
+        case 3:
+        {
+            cout << "You've requested for assistance..." << endl;
+            auto rand_assistant = rand () % list_of_assistants.size();
+            
+            cout << "Mr. " << list_of_assistants.at(rand_assistant).getName() << "will assist you today" << endl;
+            cout << "He advices you to " << list_of_assistants.at(rand_assistant).getAdvice();
+            
+            break;
+        }
+            
+        case 4:
+        {
+            cout << "Heading to billing..." << endl;
+            
+            int random_cashier = rand () % list_of_cashiers.size();
+            cout << "Mr. " << list_of_cashiers.at(random_cashier).getName()<< " is at your service" << endl;
+            
+            auto amt_to_pay = calcSum (cart);
+            cout << "The amount to be paid is Rs. " << amt_to_pay << endl;
+            
+            try
+            {
+                
+                cout << "1. Pay bill\n2. Exit the store" << endl;
+                cin >> ch;
+                
+                if (ch != 1 && ch != 2)
+                    throw 404;
+                
+                switch (ch)
+                {
+                    case 1:
+                    {
+                        cout << "Bill paid successfully!" << endl;
+                        cout << "Your transaction ID is " << transaction :: txn_id << endl;
+                        
+                        
+                        for (auto i : cart)
+                            curr_customer.purchasedProducts (transaction :: txn_id, i.getId()); //FIXME:- ADD OPTION TO VIEW PAST PURCHASED PRODUCTS FOR A CUSTOMER
+                        
+                        cout << "You've earned "; //FIXME:- DISPLAY POINTS EARNED FOR THIS PURCHASE
+                        
+                        transaction :: getNextTxnId();
+                        break;
+                    }
+                        
+                    case 2:
+                    {
+                        
+                        break;
+                    }
+                }
+            }
+            
+            catch (...)
+            {
+                cout << "invalid choice. Try again" << endl;
+            }
+            
+            
+            break;
+        }
+    }
     
 }
