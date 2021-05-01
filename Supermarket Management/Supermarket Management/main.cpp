@@ -9,58 +9,61 @@ using namespace std;
 class date
 {
     int dd,mm,yy;
-  public:
+    
+public:
     date() {}
+    
     date(int dd, int mm, int yy)
     {
-          this->dd = dd;
-          this->mm = mm;
-          this->yy = yy;
+        this->dd = dd;
+        this->mm = mm;
+        this->yy = yy;
     }
     void printdate()
     {
         cout << dd << "/" << mm << "/" << yy << endl;
     }
-
+    
 };
- 
+
 class person
 {
-  protected:
+protected:
     string name;
     int phNo;
     string addr;
-  public:
-      person() 
-      {
-
-      }
-      person(string name, int phNo, string addr)
-      {
-          this->name = name;
-          this->phNo = phNo;
-          this->addr = addr;
-      }
-      void printPerson()
-      {
-          cout<<"Customer Name:"<<name<<endl;
-          cout<<"Address:"<<addr<<endl;
-          cout<<"Phone Number:"<<phNo<<endl;
-
-      }
-      string getName()
-      {
-          return name;
-      }
-      string getaddr()
-      {
-          return addr;
-      }
-      int getPhoneNo()
-      {
-          return phNo;
-      }
-       
+    
+public:
+    person()
+    {
+        
+    }
+    person(string name, int phNo, string addr)
+    {
+        this->name = name;
+        this->phNo = phNo;
+        this->addr = addr;
+    }
+    void printPerson()
+    {
+        cout<<"Customer Name:"<<name<<endl;
+        cout<<"Address:"<<addr<<endl;
+        cout<<"Phone Number:"<<phNo<<endl;
+        
+    }
+    string getName()
+    {
+        return name;
+    }
+    string getaddr()
+    {
+        return addr;
+    }
+    int getPhoneNo()
+    {
+        return phNo;
+    }
+    
 };
 
 class customer:public person
@@ -68,11 +71,9 @@ class customer:public person
     multimap<int,int>product_purchased;
     
 public:
-
-    customer ()
-    {
-
-    }
+    
+    customer () {}
+    
     customer(string name,int phNo,string addr):person(name,phNo,addr)
     {
         
@@ -85,17 +86,17 @@ public:
     
 };
 
-class staff:public person
+class staff: public person
 {
     int aadharNo;
     string job_designation;
     float salary;
-    date join_date;   
-  public:
-
-staff () {}
-
-    staff(string name,int phNo,string addr,int aadharNo,string jd,float salary,date join_date):person(name,phNo,addr)
+    date join_date;
+public:
+    
+    staff () {}
+    
+    staff (string name,int phNo,string addr,int aadharNo,string jd,float salary,date join_date):person(name,phNo,addr)
     {
         this->aadharNo=aadharNo;
         this->job_designation=jd;
@@ -112,19 +113,19 @@ staff () {}
         cout<<"aadharNumber"<<aadharNo<<endl;
         cout<<"job_designation"<<job_designation<<endl;
         cout<<"salary"<<salary<<endl;
-   }
-   int getaadhar()
-   {
-       return aadharNo;
-   }
-   string getJobDesignation()
-   {
-       return job_designation;
-   }
-   float getSalary()
-   {
-       return salary;
-   }
+    }
+    int getaadhar()
+    {
+        return aadharNo;
+    }
+    string getJobDesignation()
+    {
+        return job_designation;
+    }
+    float getSalary()
+    {
+        return salary;
+    }
 };
 
 class product
@@ -135,10 +136,10 @@ class product
     date dom;
     date doe;
     
-  public:
+public:
     product()
     {
-
+        
     }
     product(string category,float cost,string name,int id,date dom,date doe,int quantity,int batchNo)
     {
@@ -152,6 +153,7 @@ class product
         this->batchNo=batchNo;
         
     }
+    
     void printproductdetails()
     {
         cout<<"Category:"<<category<<endl;
@@ -164,44 +166,51 @@ class product
         cout<<"Cost:"<<cost<<endl;
         cout<<"Quantity:"<<quantity<<"  Batch No:"<<batchNo<<endl;
     }
-    int getId() 
+    
+    int getId()
     {
         return id;
     }
+    
     int getQuantity()
     {
         return quantity;
     }
+    
     int getBatchNo()
     {
         return batchNo;
     }
+    
     string getName()
     {
         return name;
-    } 
+    }
+    
     string getCategory()
     {
         return category;
     }
+    
     float getCost()
     {
         return cost;
     }
-       
+    
 };
 
-class INVENTORY
+class inventory
 {
     vector<product>products_available;
-  public:
- 
+    
+public:
+    
 };
 
 class supplier
 {
-   string agency_name;
-   multimap<int,int>items_restocked;
+    string agency_name;
+    multimap<int,int>items_restocked;
 };
 
 /// Aggregation between MEMBERSHIP & CUSTOMER
@@ -209,10 +218,10 @@ class membership
 {
     int points;
     date added;
-  public:
+public:
     membership()
     {
-
+        
     }
     membership(int points,date added)
     {
@@ -237,10 +246,10 @@ class store
 {
     string name;
     string location;
-  public:
+public:
     store()
     {
-
+        
     }
     store(string name, string location)
     {
@@ -269,14 +278,16 @@ class transaction
     date date;
     float amount;
     string txn_id;
- public:
+    
+public:
+    
     transaction()
     {
-       
+        
     }
 };
 
 int main(int argc, const char *argv[])
 {
-
+    
 }
