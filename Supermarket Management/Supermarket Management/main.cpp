@@ -34,10 +34,8 @@ protected:
     string addr;
     
 public:
-    person()
-    {
-        
-    }
+    person() {}
+    
     person(string name, int phNo, string addr)
     {
         this->name = name;
@@ -155,30 +153,44 @@ public:
     }
 };
 
+class cashier : public staff
+{
+    int txns_processed;
+    
+public:
+    
+    cashier (int txns_processed, string name,int phNo,string addr,int aadharNo,string jd,float salary,date join_date) : txns_processed (txns_processed),
+    staff (name,phNo,addr,aadharNo,jd,salary,join_date) {}
+};
+
+class  assistant : public staff
+{
+    vector <string> advice;
+    
+public:
+    
+    assistant (vector <string> advice, string name,int phNo,string addr,int aadharNo,string jd,float salary,date join_date) : advice (advice),
+    staff (name,phNo,addr,aadharNo,jd,salary,join_date) {}
+};
+
 class product
 {
     string category,name;
     float cost;
-    int id,quantity,batchNo;
-    date dom;
-    date doe;
+    int id,quantity;
     
 public:
     product()
     {
         
     }
-    product(string category,float cost,string name,int id,date dom,date doe,int quantity,int batchNo)
+    product(string category,float cost,string name,int id,int quantity)
     {
         this->category=category;
         this->cost=cost;
         this->name=name;
         this->id=id;
-        this->dom=dom;
-        this->doe=doe;
         this->quantity=quantity;
-        this->batchNo=batchNo;
-        
     }
     
     void printproductdetails()
@@ -187,11 +199,8 @@ public:
         cout<<"Product Name:"<<name<<endl;
         cout<<"Product Id"<<id<<endl;
         cout<<"Date of Manufacturer:";
-        dom.printdate();
-        cout<<"Date of Expiry:";
-        doe.printdate();
         cout<<"Cost:"<<cost<<endl;
-        cout<<"Quantity:"<<quantity<<"  Batch No:"<<batchNo<<endl;
+        cout<<"Quantity:"<<quantity << endl;
     }
     
     int getId()
@@ -202,11 +211,6 @@ public:
     int getQuantity()
     {
         return quantity;
-    }
-    
-    int getBatchNo()
-    {
-        return batchNo;
     }
     
     string getName()
@@ -224,6 +228,43 @@ public:
         return cost;
     }
     
+};
+
+class furniture : public product
+{
+private:
+    
+    vector <string> list_of_items;
+    
+public:
+    
+    furniture (vector <string> list_of_items, string category,float cost,string name,int id, int quantity) : list_of_items (list_of_items),
+    product (category, cost, name, id, quantity) {}
+    
+};
+
+class groceries : public product
+{
+private:
+    
+    date dom, doe;
+    
+public:
+    
+    groceries (date dom, date doe, string category,float cost,string name,int id, int quantity) : dom (dom), doe (doe),
+    product (category, cost, name, id, quantity) {}
+};
+
+class clothes : public product
+{
+private:
+    
+    string brand_name;
+    
+public:
+    
+    clothes (string brand_name, string category,float cost,string name,int id, int quantity) : brand_name (brand_name),
+    product (category, cost, name, id, quantity) {}
 };
 
 class inventory
