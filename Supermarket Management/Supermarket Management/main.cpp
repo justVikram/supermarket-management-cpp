@@ -120,6 +120,13 @@ public:
         membership_pts.addPoints(points);
     }
     
+    virtual int convertToPoints (int bill_amount)
+    {
+        return 0;
+    }
+    
+    virtual void calcPoints(int bill_amount)
+    {}
     
 };
 
@@ -129,13 +136,13 @@ public:
     
     goldmember (string name,int phNo,string addr) : customer (name, phNo, addr) {}
     
-    int convertToPoints (int bill_amount)
+    int convertToPoints (int bill_amount) override
     {
         int eqvt_pts = 0.20 * bill_amount;
         return eqvt_pts;
     }
     
-    void calcPoints(int bill_amount)
+    void calcPoints(int bill_amount) override
     {
         // Silver member gets 15% of total bill amount as
         
@@ -149,13 +156,13 @@ public:
     
     silvermember (string name,int phNo,string addr) : customer (name, phNo, addr) {}
     
-    int convertToPoints (int bill_amount)
+    int convertToPoints (int bill_amount) override
     {
         int eqvt_pts = 0.15 * bill_amount;
         return eqvt_pts;
     }
     
-    void calcPoints(int bill_amount)
+    void calcPoints(int bill_amount) override
     {
         // Silver member gets 15% of total bill amount as
         
@@ -169,13 +176,13 @@ public:
     
     bronzemember (string name,int phNo,string addr) : customer (name, phNo, addr) {}
     
-    int convertToPoints (int bill_amount)
+    int convertToPoints (int bill_amount) override
     {
         int eqvt_pts = 0.10 * bill_amount;
         return eqvt_pts;
     }
     
-    void calcPoints(int bill_amount)
+    void calcPoints(int bill_amount) override
     {
         // Silver member gets 15% of total bill amount as
         
@@ -222,12 +229,22 @@ public:
 
 class cashier : public staff
 {
-    int txns_processed;
+    int txns_processed = 0;
     
 public:
     
     cashier (int txns_processed, string name,int phNo,string addr,int aadharNo,float salary,date join_date) : txns_processed (txns_processed),
     staff (name,phNo,addr,aadharNo,salary,join_date) {}
+    
+    void processedTxn ()
+    {
+        txns_processed++;
+    }
+    
+    int getTotalTxnsProcessed ()
+    {
+        return txns_processed;
+    }
 };
 
 class  assistant : public staff
@@ -351,6 +368,15 @@ class supplier
 {
     string agency_name;
     multimap<int,int>items_restocked;
+    
+public:
+    
+    supplier (string name) : agency_name (name) {}
+    
+    string getAgencyName ()
+    {
+        return agency_name;
+    }
 };
 
 /// Aggregation between STORE & Staff
@@ -409,7 +435,7 @@ int transaction :: txn_id = 1;
 
 
 
-customer findByPhNo (vector <goldmember> gold_person, vector <silvermember> silver_person, vector <bronzemember> bronze_person, int ph_no)
+customer * findByPhNo (vector <goldmember> gold_person, vector <silvermember> silver_person, vector <bronzemember> bronze_person, int ph_no)
 {
     customer * reqd_customer = new customer ("invalid", 00, "invalid");
     
@@ -427,10 +453,10 @@ customer findByPhNo (vector <goldmember> gold_person, vector <silvermember> silv
     
     //FIXME:- DO THE SAME FOR THE OTHER VECTOR
     
-    return *reqd_customer;
+    return reqd_customer;
 }
 
-product findByProductID (vector <product> list_of_products, int p_id = 0)
+product findByProductID (vector <product> list_of_products, int p_id)
 {
     //FIXME:- RETURN OBJECT OF PRODUCT WHICH HAS SAME PRODUCT ID AS ONE OF THE PRODUCTS IN THE LIST
     return list_of_products.at(0);
@@ -462,199 +488,313 @@ int main(int argc, const char *argv[])
     vector <product> list_of_products;
     vector <product> cart;
     
+    vector <supplier> list_of_suppliers;
+    
     cout << "Welcome to Vinayak Mart!" << endl;
     
-    cout << "1. New customer\n2. Existing customer" << endl;
-    int ch;
-    cin >> ch;
-    
-    auto ph_no = 0;
-    
-    if (ch == 1)
+    while (1)
     {
+        cout << "1. Customer login\n2. Admin login" << endl;
         int ch;
-        cout << "What membership tier would you like to avail?\n 1. Gold \n 2. Silver \n 3. Bronze" << endl;
         cin >> ch;
         
-        try
+        
+        if (ch == 2)
         {
-            if (ch > 0 && ch < 4)
+            cout << "1. View transactions processed by each staff\n2. View all staffs' details\n3. Restock items" << endl;
+            int ch;
+            cin >> ch;
+            
+            switch (ch)
             {
-                cout << "Enter your name:";
-                string name;
-                cin >> name;
+                case 1:
+                {
+                    for (auto i : list_of_cashiers)
+                        i.getTotalTxnsProcessed();
+                    
+                    break;
+                }
+                    
+                case 2:
+                {
+                    for (auto i : list_of_cashiers)
+                        i.printStaffDetails();
+                    
+                    break;
+                }
+                    
+                case  3:
+                {
+                    cout << "Enter product ID of product to be restocked:";
+                    int p_id;
+                    
+                    try
+                    {
+                        cin >> p_id;
+                        
+                        if (! isProductIdValid (list_of_products,p_id))
+                            throw 404;
+                        
+                        int rand_supplier = rand() % list_of_suppliers.size();
+                        
+                        cout << "Your order will be serviced by " << list_of_suppliers.at(rand_supplier).getAgencyName() << endl;
+                    }
+                    
+                    catch (...)
+                    {
+                        cout << "Invalid product ID, try again" << endl;
+                    }
+                }
+            }
+        }
+        
+        int IsValid = 1;
+        auto ph_no = 0;
+        
+        while (IsValid)
+        {
+            cout << "1. New customer\n2. Existing customer" << endl;
+            cin >> ch;
+            
+            if (ch == 1)
+            {
+                int ch;
+                cout << "What membership tier would you like to avail?\n 1. Gold \n 2. Silver \n 3. Bronze" << endl;
+                cin >> ch;
                 
-                cout << "Enter your phone number:";
+                try
+                {
+                    if (ch > 0 && ch < 4)
+                    {
+                        cout << "Enter your name:";
+                        string name;
+                        cin >> name;
+                        
+                        cout << "Enter your phone number:";
+                        cin >> ph_no;
+                        
+                        cout << "Enter your address:";
+                        string addr;
+                        cin >> addr;
+                        
+                        switch (ch)
+                        {
+                            case 1:
+                            {
+                                gold_customers.push_back (goldmember (name, ph_no, addr));
+                                IsValid = 0;
+                                cout << "You're now a member!" << endl;
+                                break;
+                            }
+                                
+                            case 2:
+                            {
+                                silver_customers.push_back (silvermember (name, ph_no, addr));
+                                IsValid = 0;
+                                cout << "You're now a member!" << endl;
+                                break;
+                            }
+                                
+                            case 3:
+                            {
+                                bronze_customers.push_back (bronzemember (name, ph_no, addr));
+                                IsValid = 0;
+                                cout << "You're now a member!" << endl;
+                                break;
+                            }
+                        }
+                    }
+                    
+                    else
+                    {
+                        IsValid = 1;
+                        throw 404;
+                    }
+                }
+                
+                catch (...)
+                {
+                    cout << "Invalid preference. Please try again." << endl;
+                }
+            }
+            
+            else if (ch == 2)
+            {
+                cout << "Enter your phone number:" << endl;
                 cin >> ph_no;
                 
-                cout << "Enter your address:";
-                string addr;
-                cin >> addr;
                 
-                switch (ch)
+                try
                 {
-                    case 1:
+                    auto person = findByPhNo (gold_customers, silver_customers, bronze_customers, ph_no);
+                    
+                    if (person->getName() == "invalid")
                     {
-                        gold_customers.push_back (goldmember (name, ph_no, addr));
-                        break;
+                        IsValid = 1;
+                        throw 404;
                     }
-                        
-                    case 2:
-                    {
-                        silver_customers.push_back (silvermember (name, ph_no, addr));
-                        break;
-                    }
-                        
-                    case 3:
-                    {
-                        bronze_customers.push_back (bronzemember (name, ph_no, addr));
-                        break;
-                    }
+                    
+                    else
+                        IsValid = 0;
+                }
+                catch (...)
+                {
+                    cout << "Invalid phone number, please try again." << endl;
                 }
             }
             
             else
-                throw 404;
+                cout << "You have selected an incorrect option, please try again." << endl;
         }
         
-        catch (...)
-        {
-            cout << "Invalid preference. Please try again." << endl;
-        }
-    }
-    
-    else if (ch == 2)
-    {
-        cout << "Enter your phone number:" << endl;
-        cin >> ph_no;
         
+        auto curr_customer = findByPhNo(gold_customers, silver_customers, bronze_customers, ph_no);
         
-        try
+        int cont = 1;
+        
+        while (cont)
         {
-            auto person = findByPhNo (gold_customers, silver_customers, bronze_customers, ph_no);
+            cout << "What would you like to do next?" << endl;
+            cout << "1. View product catalogue\n2. Add a product to cart\n3. Ask for assistance\n4. Head to billing\n 5. Get product details" << endl;
+            cin >> ch;
             
-            if (person.getName() == "invalid")
-                throw 404;
-        }
-        catch (...)
-        {
-            cout << "Invalid phone number, please try again." << endl;
-        }
-    }
-    
-    else
-        cout << "You have selected an incorrect option, please try again." << endl;
-    
-    auto curr_customer = findByPhNo(gold_customers, silver_customers, bronze_customers, ph_no);
-    
-    //probably end of while (1)
-    
-    cout << "What would you like to do next?" << endl;
-    cout << "1. View product catalogue\n2. Add a product to cart\n3. Ask for assistance\n4. Head to billing" << endl;
-    cin >> ch;
-    
-    
-    switch (ch)
-    {
-        case 1:
-        {
-            cout << "Displaying all products in the store..." << endl;
             
-            for (auto i: list_of_products)
+            switch (ch)
             {
-                i.printproductdetails();
-                cout << endl;
-            }
-            break;
-        }
-            
-        case 2:
-        {
-            cout << "Enter product ID of the product you wish to add to cart:" << endl;
-            auto p_id = 0;
-            
-            try
-            {
-                cin >> p_id;
-                
-                if (! isProductIdValid (list_of_products,p_id))
-                    throw 404;
-            }
-            
-            catch (...)
-            {
-                cout << "Invalid product ID, try again" << endl;
-            }
-            
-            auto product_to_be_added = findByProductID(list_of_products, p_id);
-            cart.push_back(product_to_be_added);
-            
-            break;
-        }
-            
-        case 3:
-        {
-            cout << "You've requested for assistance..." << endl;
-            auto rand_assistant = rand () % list_of_assistants.size();
-            
-            cout << "Mr. " << list_of_assistants.at(rand_assistant).getName() << "will assist you today" << endl;
-            cout << "He advices you to " << list_of_assistants.at(rand_assistant).getAdvice();
-            
-            break;
-        }
-            
-        case 4:
-        {
-            cout << "Heading to billing..." << endl;
-            
-            int random_cashier = rand () % list_of_cashiers.size();
-            cout << "Mr. " << list_of_cashiers.at(random_cashier).getName()<< " is at your service" << endl;
-            
-            auto amt_to_pay = calcSum (cart);
-            cout << "The amount to be paid is Rs. " << amt_to_pay << endl;
-            
-            try
-            {
-                
-                cout << "1. Pay bill\n2. Exit the store" << endl;
-                cin >> ch;
-                
-                if (ch != 1 && ch != 2)
-                    throw 404;
-                
-                switch (ch)
+                case 1:
                 {
-                    case 1:
+                    cout << "Displaying all products in the store..." << endl;
+                    
+                    for (auto i: list_of_products)
                     {
-                        cout << "Bill paid successfully!" << endl;
-                        cout << "Your transaction ID is " << transaction :: txn_id << endl;
-                        
-                        
-                        for (auto i : cart)
-                            curr_customer.purchasedProducts (transaction :: txn_id, i.getId()); //FIXME:- ADD OPTION TO VIEW PAST PURCHASED PRODUCTS FOR A CUSTOMER
-                        
-                        cout << "You've earned "; //FIXME:- DISPLAY POINTS EARNED FOR THIS PURCHASE
-                        
-                        transaction :: getNextTxnId();
-                        break;
+                        i.printproductdetails();
+                        cout << endl;
                     }
+                    
+                    cont = 1;
+                    break;
+                }
+                    
+                case 2:
+                {
+                    cout << "Enter product ID of the product you wish to add to cart:" << endl;
+                    auto p_id = 0;
+                    
+                    try
+                    {
+                        cin >> p_id;
                         
-                    case 2:
+                        if (! isProductIdValid (list_of_products,p_id))
+                            throw 404;
+                    }
+                    
+                    catch (...)
+                    {
+                        cout << "Invalid product ID, try again" << endl;
+                    }
+                    
+                    auto product_to_be_added = findByProductID(list_of_products, p_id);
+                    cart.push_back(product_to_be_added);
+                    
+                    cont = 1;
+                    
+                    break;
+                }
+                    
+                case 3:
+                {
+                    cout << "You've requested for assistance..." << endl;
+                    auto rand_assistant = rand () % list_of_assistants.size();
+                    
+                    cout << "Mr. " << list_of_assistants.at(rand_assistant).getName() << "will assist you today" << endl;
+                    cout << "He advices you to " << list_of_assistants.at(rand_assistant).getAdvice();
+                    
+                    cont = 1;
+                    break;
+                }
+                    
+                case 4:
+                {
+                    cout << "Heading to billing..." << endl;
+                    
+                    int random_cashier = rand () % list_of_cashiers.size();
+                    cout << "Mr. " << list_of_cashiers.at(random_cashier).getName()<< " is at your service" << endl;
+                    
+                    auto amt_to_pay = calcSum (cart);
+                    cout << "The amount to be paid is Rs. " << amt_to_pay << endl;
+                    
+                    try
                     {
                         
-                        break;
+                        cout << "1. Pay bill\n2. Exit the store" << endl;
+                        cin >> ch;
+                        
+                        if (ch != 1 && ch != 2)
+                            throw 404;
+                        
+                        switch (ch)
+                        {
+                            case 1:
+                            {
+                                cout << "Bill paid successfully!" << endl;
+                                cout << "Your transaction ID is " << transaction :: txn_id << endl;
+                                
+                                
+                                for (auto i : cart)
+                                    curr_customer->purchasedProducts (transaction :: txn_id, i.getId()); //FIXME:- ADD OPTION TO VIEW PAST PURCHASED PRODUCTS FOR A CUSTOMER
+                                
+                                cout << "You've earned " << curr_customer->convertToPoints(amt_to_pay) << " points for this txn!" << endl;
+                                
+                                list_of_cashiers.at(random_cashier).processedTxn();
+                                
+                                transaction :: getNextTxnId();
+                                cont = 0;
+                                break;
+                            }
+                                
+                            case 2:
+                            {
+                                cout << "Please come again. Thank you." << endl;
+                                cont = 0;
+                                break;
+                            }
+                        }
                     }
+                    
+                    catch (...)
+                    {
+                        cout << "invalid choice. Try again" << endl;
+                        cont = 1;
+                    }
+                    break;
+                }
+                    
+                case 5:
+                {
+                    cout << "Enter product ID of the product you wish to get details of:" << endl;
+                    auto p_id = 0;
+                    
+                    try
+                    {
+                        cin >> p_id;
+                        
+                        if (! isProductIdValid (list_of_products,p_id))
+                            throw 404;
+                    }
+                    
+                    catch (...)
+                    {
+                        cout << "Invalid product ID, try again" << endl;
+                    }
+                    
+                    auto prod = findByProductID(list_of_products, p_id);
+                    prod.printproductdetails();
+                    
+                    cont  = 1;
+                    
+                    break;
                 }
             }
-            
-            catch (...)
-            {
-                cout << "invalid choice. Try again" << endl;
-            }
-            
-            
-            break;
         }
     }
-    
-}
+    }
