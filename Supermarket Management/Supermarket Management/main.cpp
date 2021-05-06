@@ -462,7 +462,6 @@ customer * findByPhNo (vector <goldmember> gold_person, vector <silvermember> si
 
 product * findByProductID (vector <product> list_of_products, int p_id)
 {
-    //FIXME:- RETURN OBJECT OF PRODUCT WHICH HAS SAME PRODUCT ID AS ONE OF THE PRODUCTS IN THE LIST
     product *reqd_product = new product("invalid", 00, "invalid",00,00);
 
     for (auto i : list_of_products)
@@ -479,7 +478,6 @@ product * findByProductID (vector <product> list_of_products, int p_id)
 
 bool isProductIdValid (vector <product> list_of_products,int p_id)
 {
-    //FIXME:- SEARCH FOR PRODUCT WITH PRODUCT ID PASSED
     product *p = findByProductID(list_of_products,p_id);
     if(p->getId() == 00)
       return false;
@@ -489,7 +487,6 @@ bool isProductIdValid (vector <product> list_of_products,int p_id)
 }
 float calcSum (vector <product> cart)
 {
-    //FIXME:- CALCULATE TOTAL PRICE OF ALL PRODUCTS IN PRICE
     float sum=0;
     for (auto i : cart)
     {
