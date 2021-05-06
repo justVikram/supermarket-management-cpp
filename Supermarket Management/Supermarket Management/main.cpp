@@ -476,17 +476,18 @@ product * findByProductID (vector <product> list_of_products, int p_id)
 bool isProductIdValid (vector <product> list_of_products,int p_id)
 {
     //FIXME:- SEARCH FOR PRODUCT WITH PRODUCT ID PASSED
-    iterator it = find(list_of_products.begin(), list_of_products.end(), p_id);
-    if (it != list_of_products.end())
-        return 1;
-
-    else
-        return 0;
+    findByProductID(list_of_products,p_id);
+    
 }
-
-auto calcSum (vector <product> cart)
+float calcSum (vector <product> cart)
 {
     //FIXME:- CALCULATE TOTAL PRICE OF ALL PRODUCTS IN PRICE
+    float sum=0;
+    for (auto i : cart)
+    {
+        product p=findByProductID(cart,cart[i].p_id);
+        sum+=p.getPrice();
+    }
     return sum;
 }
 
