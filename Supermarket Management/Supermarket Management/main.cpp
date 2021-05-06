@@ -718,7 +718,7 @@ int main(int argc, const char *argv[])
                         cout << "Invalid product ID, try again" << endl;
                     }
                     
-                    auto product_to_be_added = findByProductID(list_of_products, p_id);
+                    auto product_to_be_added = *findByProductID(list_of_products, p_id);
                     cart.push_back(product_to_be_added);
                     
                     cont = 1;
