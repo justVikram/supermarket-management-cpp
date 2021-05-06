@@ -1,8 +1,4 @@
-#include<iostream>
-#include<string>
-#include<map>
-#include <vector>
-#include <fstream>
+#include<bits/stdc>
 
 using namespace std;
 
@@ -450,28 +446,48 @@ customer * findByPhNo (vector <goldmember> gold_person, vector <silvermember> si
         if (i.getPhoneNo() == ph_no)
             reqd_customer = &i;
     }
-    
-    //FIXME:- DO THE SAME FOR THE OTHER VECTOR
+
+    for (auto i : bronze_person)
+    {
+        if (i.getPhoneNo() == ph_no)
+            reqd_customer = &i;
+    }
     
     return reqd_customer;
 }
 
-product findByProductID (vector <product> list_of_products, int p_id)
+product * findByProductID (vector <product> list_of_products, int p_id)
 {
     //FIXME:- RETURN OBJECT OF PRODUCT WHICH HAS SAME PRODUCT ID AS ONE OF THE PRODUCTS IN THE LIST
-    return list_of_products.at(0);
+    product *reqd_product = new product("invalid", 00, "invalid",00,00);
+
+    for (auto i : list_of_products)
+    {
+        if (i.getId() == p_id)
+           {
+               reqd_product = &i;
+               return reqd_product;
+           } 
+    }
+    
+   return reqd_product;
 }
 
 bool isProductIdValid (vector <product> list_of_products,int p_id)
 {
     //FIXME:- SEARCH FOR PRODUCT WITH PRODUCT ID PASSED
-    return 1;
+    iterator it = find(list_of_products.begin(), list_of_products.end(), p_id);
+    if (it != list_of_products.end())
+        return 1;
+
+    else
+        return 0;
 }
 
 auto calcSum (vector <product> cart)
 {
     //FIXME:- CALCULATE TOTAL PRICE OF ALL PRODUCTS IN PRICE
-    return 1;
+    return sum;
 }
 
 int main(int argc, const char *argv[])
