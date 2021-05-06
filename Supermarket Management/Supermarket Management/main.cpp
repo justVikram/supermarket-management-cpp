@@ -480,7 +480,7 @@ product * findByProductID (vector <product> list_of_products, int p_id)
 bool isProductIdValid (vector <product> list_of_products,int p_id)
 {
     //FIXME:- SEARCH FOR PRODUCT WITH PRODUCT ID PASSED
-    product *p=findByProductID(list_of_products,p_id);
+    product *p = findByProductID(list_of_products,p_id);
     if(p->getId() == 00)
       return false;
     else 
@@ -493,7 +493,7 @@ float calcSum (vector <product> cart)
     float sum=0;
     for (auto i : cart)
     {
-        product p* = findByProductID(cart,i.getId());
+        product *p = findByProductID(cart,i.getId());
         sum+=p->getCost();
     }
     return sum;
