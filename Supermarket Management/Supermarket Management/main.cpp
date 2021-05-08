@@ -512,6 +512,51 @@ int main(int argc, const char *argv[])
     
     vector <supplier> list_of_suppliers;
     
+    list_of_products.push_back(product("noodles",100,"maggi",11,50));
+    list_of_products.push_back(product("biscuits",10,"oreo",12,45));
+    list_of_products.push_back(product("washingPowder",65,"nirma",13,30));
+    list_of_products.push_back(product("chocolates",5,"perk",14,76));
+    list_of_products.push_back(product("cheese",60,"amul",15,24));
+    list_of_products.push_back(product("hairdye",15,"garnier",16,37));
+    list_of_products.push_back(product("shampoo",75,"johnson",17,13));
+    list_of_products.push_back(product("coughSyrup",90,"dabur",18,17));
+    list_of_products.push_back(product("pillow",100,"sleepwell",19,23));
+    list_of_products.push_back(product("vermicilli",55,"bambino",20,24));
+    
+    
+    
+    date jd1(02,05,2019);
+    date jd2(04,06,2020);
+    date jd3(02,03,2019);
+    date jd4(02,07,2018);
+    date jd5(03,01,2020);
+    
+    
+    
+    list_of_cashiers.push_back(cashier(5,"amal",83838391,"vidyanagar",473838282,10000,jd1));
+    list_of_cashiers.push_back(cashier(7,"krunal",98838282,"gokulnagar",466363621,12000,jd2));
+    list_of_cashiers.push_back(cashier(3,"preety",83839292,"dharwad",234657728,11000,jd3));
+    list_of_cashiers.push_back(cashier(8,"dev",92983821,"stationRoad",1248584883,10000,jd4));
+    list_of_cashiers.push_back(cashier(2,"akansha",92338111,"gokulroad",576855939,12000,jd5));
+    
+    
+    
+    
+    list_of_suppliers.push_back(supplier("jai trading company"));
+    list_of_suppliers.push_back(supplier("global food company"));
+    list_of_suppliers.push_back(supplier("dayanand and co"));
+    list_of_suppliers.push_back(supplier("organic products india"));
+    list_of_suppliers.push_back(supplier("snacksLTD"));
+    
+    
+    
+    
+    list_of_assistants.push_back(assistant("we have 30% discount today!","riddhi",98383902,"dharwad",337372772,13000,jd2));
+    list_of_assistants.push_back(assistant("should check our new snacks!","raaj",93838211,"vidyanagar",939392920,12000,jd3));
+    list_of_assistants.push_back(assistant("we are selling at buy one get one!","aryan",89383828,"vidyanagar",483838212,10000,jd4));
+    list_of_assistants.push_back(assistant("we are back with incredible offers!","aditi",89473727,"gokulroad",348499283,12000,jd1));
+    list_of_assistants.push_back(assistant("unbelievable rates today!","vishal",798883721,"stationroad",384636261,11000,jd5));
+    
     cout << "Welcome to Vinayak Mart!" << endl;
     
     while (1)
@@ -819,4 +864,4 @@ int main(int argc, const char *argv[])
             }
         }
     }
-    }
+}
