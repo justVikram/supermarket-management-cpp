@@ -3,6 +3,7 @@
 #include <map>
 #include <vector>
 #include <fstream>
+#include <unistd.h>
 
 using namespace std;
 
@@ -128,11 +129,17 @@ public:
     virtual void calcPoints(int bill_amount)
     {}
     
+    int showPoints ()
+    {
+        return membership_pts.getpoints();
+    }
+    
 };
 
 class goldmember : public customer
 {
 public:
+    goldmember () {}
     
     goldmember (string name,int phNo,string addr) : customer (name, phNo, addr) {}
     
@@ -154,6 +161,8 @@ class silvermember : public customer
 {
 public:
     
+    silvermember () {}
+    
     silvermember (string name,int phNo,string addr) : customer (name, phNo, addr) {}
     
     int convertToPoints (int bill_amount) override
@@ -173,6 +182,8 @@ public:
 class bronzemember : public customer
 {
 public:
+    
+    bronzemember () {}
     
     bronzemember (string name,int phNo,string addr) : customer (name, phNo, addr) {}
     
@@ -209,11 +220,11 @@ public:
     
     void printStaffDetails()
     {
-        cout<<"name"<<name<<endl;
-        cout<<"phoneNo"<<phNo<<endl;
-        cout<<"address"<<addr<<endl;
-        cout<<"aadharNumber"<<aadharNo<<endl;
-        cout<<"salary"<<salary<<endl;
+        cout<<"Name: "<<name<<endl;
+        cout<<"phoneNo: "<<phNo<<endl;
+        cout<<"address: "<<addr<<endl;
+        cout<<"aadharNumber: "<<aadharNo<<endl;
+        cout<<"salary: "<<salary<<endl;
     }
     
     int getaadhar()
@@ -233,7 +244,7 @@ class cashier : public staff
     
 public:
     
-    cashier (int txns_processed, string name,int phNo,string addr,int aadharNo,float salary,date join_date) : txns_processed (txns_processed),
+    cashier (string name,int phNo,string addr,int aadharNo,float salary,date join_date) :
     staff (name,phNo,addr,aadharNo,salary,join_date) {}
     
     void processedTxn ()
@@ -326,6 +337,11 @@ public:
         quantity -= qty;
     }
     
+    void restockProduct (int qty)
+    {
+        quantity += qty;
+    }
+    
 };
 
 class furniture : public product
@@ -395,6 +411,11 @@ public:
                     j.decreaseQuantity(i.getQuantity());
             }
         }
+    }
+    
+    void initInventory (vector <product> list_of_products)
+    {
+        products_available = list_of_products;
     }
 };
 
@@ -533,7 +554,7 @@ int calcSum (vector <product> cart)
 
 int main(int argc, const char *argv[])
 {
-    vector <person> list_of_customers;
+    vector <customer> list_of_customers;
     
     vector <goldmember> gold_customers;
     vector <silvermember> silver_customers;
@@ -548,6 +569,7 @@ int main(int argc, const char *argv[])
     vector <supplier> list_of_suppliers;
     
     int amt_to_pay = 0;
+    customer * current_customer = new customer;
     
     list_of_products.push_back(product("noodles",100,"maggi",11,50));
     list_of_products.push_back(product("biscuits",10,"oreo",12,45));
@@ -566,11 +588,11 @@ int main(int argc, const char *argv[])
     date jd4(02,07,2018);
     date jd5(03,01,2020);
     
-    list_of_cashiers.push_back(cashier(5,"amal",83838391,"vidyanagar",473838282,10000,jd1));
-    list_of_cashiers.push_back(cashier(7,"krunal",98838282,"gokulnagar",466363621,12000,jd2));
-    list_of_cashiers.push_back(cashier(3,"preety",83839292,"dharwad",234657728,11000,jd3));
-    list_of_cashiers.push_back(cashier(8,"dev",92983821,"stationRoad",1248584883,10000,jd4));
-    list_of_cashiers.push_back(cashier(2,"akansha",92338111,"gokulroad",576855939,12000,jd5));
+    list_of_cashiers.push_back(cashier("amal",83838391,"vidyanagar",473838282,10000,jd1));
+    list_of_cashiers.push_back(cashier("krunal",98838282,"gokulnagar",466363621,12000,jd2));
+    list_of_cashiers.push_back(cashier("preety",83839292,"dharwad",234657728,11000,jd3));
+    list_of_cashiers.push_back(cashier("dev",92983821,"stationRoad",1248584883,10000,jd4));
+    list_of_cashiers.push_back(cashier("akansha",92338111,"gokulroad",576855939,12000,jd5));
     
     list_of_suppliers.push_back(supplier("jai trading company"));
     list_of_suppliers.push_back(supplier("global food company"));
@@ -584,7 +606,7 @@ int main(int argc, const char *argv[])
     list_of_assistants.push_back(assistant("we are back with incredible offers!\n","aditi",89473727,"gokulroad",348499283,12000,jd1));
     list_of_assistants.push_back(assistant("unbelievable rates today!\n","vishal",798883721,"stationroad",384636261,11000,jd5));
     
-    inventory items_in_inventory (list_of_products);
+    inventory the_inventory (list_of_products);
     
     cout << "Welcome to Vinayak Mart!" << endl;
     
@@ -597,7 +619,7 @@ int main(int argc, const char *argv[])
     {
         while (1)
         {
-            cout << "1. View transactions processed by each staff\n2. View all staffs' details\n3. Restock items\n4. View Inventory\n5. Exit" << endl;
+            cout << "1. View transactions processed by each staff\n2. View all staffs' details\n3. Restock items\n4. View Inventory\n5. Exit" << endl << endl;
             int ch;
             cin >> ch;
             
@@ -606,7 +628,7 @@ int main(int argc, const char *argv[])
                 case 1:
                 {
                     for (auto i : list_of_cashiers)
-                        i.getTotalTxnsProcessed();
+                        cout << i.getTotalTxnsProcessed() << endl;
                     
                     break;
                 }
@@ -614,7 +636,16 @@ int main(int argc, const char *argv[])
                 case 2:
                 {
                     for (auto i : list_of_cashiers)
+                    {
                         i.printStaffDetails();
+                        cout << endl;
+                    }
+                    
+                    for (auto i : list_of_assistants)
+                    {
+                        i.printStaffDetails();
+                        cout << endl;
+                    }
                     
                     break;
                 }
@@ -631,9 +662,26 @@ int main(int argc, const char *argv[])
                         if (! isProductIdValid (list_of_products,p_id))
                             throw 404;
                         
+                        int qty_to_order;
+                        int old_qty = list_of_products.at(p_id - 11).getQuantity();
+                        cout << "Enter quantity:";
+                        cin >> qty_to_order;
+                        
                         int rand_supplier = rand() % list_of_suppliers.size();
                         
                         cout << "Your order will be serviced by " << list_of_suppliers.at(rand_supplier).getAgencyName() << endl;
+                        list_of_products.at(p_id - 11).restockProduct(qty_to_order);
+                        int new_qty = list_of_products.at(p_id - 11).getQuantity();
+                        
+                        usleep(2000000);
+                        
+                        cout << "Receiving order... RESTOCKED!" << endl;
+                        
+                        usleep (2000000);
+                        
+                        cout << "Old quantity = " << old_qty <<"\nNew Quantity = "<< new_qty << endl << endl;
+                        
+                        the_inventory.initInventory(list_of_products);
                     }
                     
                     catch (...)
@@ -646,7 +694,8 @@ int main(int argc, const char *argv[])
                     
                 case 4:
                 {
-                    //FIXME:- DISPLAY INVENTORY
+                    the_inventory.viewInventory();
+                        
                     break;
                 }
                     
@@ -661,6 +710,10 @@ int main(int argc, const char *argv[])
     
     int IsValid = 1;
     auto ph_no = 0;
+    
+    goldmember newgoldmember;
+    silvermember newsilvermember;
+    bronzemember newbronzemember;
     
     while (IsValid)
     {
@@ -694,7 +747,9 @@ int main(int argc, const char *argv[])
                     {
                         case 1:
                         {
-                            gold_customers.push_back (goldmember (name, ph_no, addr));
+                            newgoldmember = goldmember(name, ph_no, addr);
+                            gold_customers.push_back (newgoldmember);
+                            current_customer = &newgoldmember;
                             cout << "You're now a member!" << endl << endl;
                             
                             amt_to_pay += 200;
@@ -704,9 +759,10 @@ int main(int argc, const char *argv[])
                             
                         case 2:
                         {
-                            silver_customers.push_back (silvermember (name, ph_no, addr));
+                            newsilvermember = silvermember (name, ph_no, addr);
+                            silver_customers.push_back (newsilvermember);
+                            current_customer = &newsilvermember;
                             cout << "You're now a member!" << endl << endl;
-                            
                             amt_to_pay += 100;
                             
                             break;
@@ -714,7 +770,9 @@ int main(int argc, const char *argv[])
                             
                         case 3:
                         {
-                            bronze_customers.push_back (bronzemember (name, ph_no, addr));
+                            newbronzemember = bronzemember (name, ph_no, addr);
+                            bronze_customers.push_back (newbronzemember);
+                            current_customer = &newbronzemember;
                             cout << "You're now a member!" << endl << endl;
                             
                             amt_to_pay += 50;
@@ -765,8 +823,6 @@ int main(int argc, const char *argv[])
         else
             cout << "You have selected an incorrect option, please try again." << endl;
     }
-    
-    customer * curr_customer = findByPhNo(gold_customers, silver_customers, bronze_customers, ph_no);
     
     int cont = 1;
     
@@ -866,15 +922,17 @@ int main(int argc, const char *argv[])
                             
                             
                             for (auto i : cart)
-                                curr_customer->purchasedProducts (transaction :: txn_id, i.getId());
+                                current_customer->purchasedProducts (transaction :: txn_id, i.getId());
                             
-                            cout << "You've earned " << curr_customer->convertToPoints(amt_to_pay) << " points for this txn!" << endl;
+                            cout << "You've earned " << current_customer->convertToPoints(amt_to_pay) << " points for this txn!" << endl;
+                            
+                            current_customer->calcPoints(amt_to_pay);
+                            list_of_customers.push_back(*current_customer);
                             
                             list_of_cashiers.at(random_cashier).processedTxn();
-                            
                             transaction :: getNextTxnId();
                             
-                            items_in_inventory.removeFromInventory(cart);
+                            the_inventory.removeFromInventory(cart);
                             
                             cont = 0;
                             break;
