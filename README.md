@@ -50,6 +50,7 @@ Any customer can request to view a list of the products they have purchased prev
 ## Design
 
 ### 2.1 Class Diagrams
+![Class Diagram](https://github.com/justVikram/OOPP-Course-Project/blob/master/Project%20UML%20Diagram.jpeg)
 
  #### Person
 
